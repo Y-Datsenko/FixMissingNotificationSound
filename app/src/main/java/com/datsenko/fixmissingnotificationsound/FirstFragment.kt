@@ -26,6 +26,7 @@ class FirstFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        removeBrokenChannel()
         initNotificationChannel()
     }
 
@@ -72,7 +73,7 @@ class FirstFragment : Fragment() {
             setName(channelName)
             setDescription(channelDescription)
             setSound(
-                Uri.parse("${ContentResolver.SCHEME_ANDROID_RESOURCE}://${requireContext().packageName}/${R.raw.iphone_ringtone}"),
+                Uri.parse("${ContentResolver.SCHEME_ANDROID_RESOURCE}://${requireContext().packageName}/raw/iphone_ringtone"),
                 Notification.AUDIO_ATTRIBUTES_DEFAULT
             )
         }
@@ -85,8 +86,14 @@ class FirstFragment : Fragment() {
             .joinToString(separator = "\n,") { "id =[${it.id}] with sound URI =[${it.sound}]" }
             .takeIf { it.isNotEmpty() } ?: "empty channel info"
 
+    private fun removeBrokenChannel() {
+        NotificationManagerCompat.from(requireContext())
+            .deleteNotificationChannel(BROKEN_CHANNEL_ID)
+    }
+
 
     companion object {
-        const val CHANNEL_ID: String = "general_channel"
+        const val BROKEN_CHANNEL_ID: String = "general_channel"
+        const val CHANNEL_ID: String = "general_channel_new"
     }
 }
